@@ -1,2 +1,2 @@
 # indiegogo-scrapper
-Indiegogo Scraper merupakan perangkat untuk mengikis web Indiegogo. Perangkat ini menggunakan set data proyek di Indiegogo oleh Web Robots yaitu Indiegogo Datasets sebagai masukan untuk mengikis data teks pada menu Story, FAQ, Updates, dan Discussion. Serta data pada Basic Section.
+Indiegogo Scraper is a tool for scraping the Indiegogo web. This tool uses project datasets on Indiegogo by Web Robots, namely Indiegogo Datasets as input to scrape text data on the Story, FAQ, Updates, and Discussion menus. As well as data on the Basic Section.
