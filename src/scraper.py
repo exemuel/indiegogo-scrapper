@@ -1,6 +1,7 @@
 # load standard libraries
 import re
 import time
+import json
 
 # load testing library
 from selenium import webdriver, common
@@ -24,6 +25,13 @@ def try_or(fn):
 def cleaning_string(txt):
     txt = re.sub(r'<.*?>', '', txt)
     return txt
+
+# function to get project url
+def extract_project_url(df_input):
+    list_url = []
+    for ele in df_input["clickthrough_url"]:
+        list_url.append("https://www.indiegogo.com" + ele)
+    return list_url
 
 '''
 Scrape data from Basic Section and Story Menu
