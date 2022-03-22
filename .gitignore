@@ -8,7 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-chromedriver
+chromedriver/
 build/
 develop-eggs/
 dist/
