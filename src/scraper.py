@@ -33,6 +33,16 @@ def extract_project_url(df_input):
         list_url.append("https://www.indiegogo.com" + ele)
     return list_url
 
+# function to retry due to certain errors
+def retry(fun, max_tries=10):
+    for i in range(max_tries):
+        try:
+           time.sleep(0.3) 
+           fun()
+           break
+        except Exception:
+            continue
+        
 '''
 Scrape data from Basic Section and Story Menu
 '''
