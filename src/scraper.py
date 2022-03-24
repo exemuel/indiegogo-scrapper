@@ -406,3 +406,17 @@ def scrape_comments(url):
                     }
     
     return dict_res
+
+'''
+Merge all menu scraper
+'''
+def scrapes(url):
+    dict_out = {
+        "site": url,
+        "basic_story": scrape_basic_and_story(url),
+        "faq": scrape_faq(url),
+        "updates": scrape_updates(url),
+        "disscusion": scrape_discussion(url),
+        "comments": scrape_comments(url)
+    }
+    return dict_out
