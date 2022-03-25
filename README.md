@@ -4,4 +4,4 @@ Indiegogo Scraper is a tool for scraping the Indiegogo web. This tool uses proje
 # Usage
 To scrape based on project's url in Indiegogo Datasets, provided by Web Robots, and store the results in a json file:
 
-`$ python src\main.py output.json`
+`$ python src\main.py indiegogo-corpus.json`
