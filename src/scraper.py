@@ -7,6 +7,7 @@ import json
 from selenium import webdriver, common
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
+from selenium.common.exceptions import WebDriverException
 
 # load HTML and XML documents parser library
 from bs4 import BeautifulSoup
@@ -34,14 +35,14 @@ def extract_project_url(df_input):
     return list_url
 
 # function to retry due to certain errors
-def retry(fun, max_tries=10):
+def retry(fun, max_tries=5):
     for i in range(max_tries):
         try:
-           time.sleep(0.3) 
-           fun()
-           break
-        except Exception:
-            continue
+            fun()
+            break
+        except (Exception, WebDriverException) as e:
+            print(e, "| retry", i ,"in progress...")
+            time.sleep(5)
         
 '''
 Scrape data from Basic Section and Story Menu
@@ -51,6 +52,7 @@ def scrape_basic_and_story(url):
     options = webdriver.ChromeOptions()
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--disable-extensions")
+    options.add_experimental_option("prefs", {"profile.default_content_setting_values.cookies": 2})
     options.add_experimental_option("useAutomationExtension", False)
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option("excludeSwitches", ["enable-logging"])
@@ -63,10 +65,10 @@ def scrape_basic_and_story(url):
     while True:
         try:
             driver.find_element(By.CLASS_NAME, "buttonSecondary buttonSecondary--gogenta buttonSecondary--medium").click()
-            time.sleep(2)
+            time.sleep(3)
         except common.exceptions.NoSuchElementException:
             break
-    time.sleep(2)
+    time.sleep(3)
     
     content = driver.page_source
     driver.quit()
@@ -111,7 +113,7 @@ def scrape_faq(url):
     
     driver.implicitly_wait(10)
     driver.get(url+"/#/faq")
-    time.sleep(2)
+    time.sleep(3)
     
     content = driver.page_source
     driver.quit()
@@ -160,10 +162,10 @@ def scrape_updates(url):
     while True:
         try:
             driver.find_element(by=By.LINK_TEXT, value="routerContentUpdate-readMore").click()
-            time.sleep(2)
+            time.sleep(3)
         except common.exceptions.NoSuchElementException:
             break
-    time.sleep(2)
+    time.sleep(3)
     
     content = driver.page_source
     driver.quit()
@@ -217,7 +219,7 @@ def scrape_discussion(url):
         try:
             element = driver.find_element(by=By.LINK_TEXT, value="Show more comments")
             element.click()
-            time.sleep(2)
+            time.sleep(3)
         except common.exceptions.NoSuchElementException:
             break
 
@@ -225,10 +227,10 @@ def scrape_discussion(url):
         try:
             element = driver.find_element(by=By.LINK_TEXT, value="Show 1 more reply")
             element.click()
-            time.sleep(2)
+            time.sleep(3)
         except common.exceptions.NoSuchElementException:
             break
-    time.sleep(2)
+    time.sleep(3)
     
     content = driver.page_source
     driver.quit()
@@ -298,7 +300,8 @@ def scrape_discussion(url):
                         "dsc_vote_down": dsc_vote_down,
                         "dsc_comments": dict_cmts                
                     }
-    
+    if dict_res == {}: dict_res = "<n/a>"
+
     return dict_res
 
 '''
@@ -323,7 +326,7 @@ def scrape_comments(url):
         try:
             element = driver.find_element(by=By.LINK_TEXT, value="See More Comments")
             element.click()
-            time.sleep(2)
+            time.sleep(3)
         except common.exceptions.NoSuchElementException:
             break
 
@@ -331,7 +334,7 @@ def scrape_comments(url):
         try:
             element = driver.find_element(by=By.LINK_TEXT, value="more reply")
             element.click()
-            time.sleep(2)
+            time.sleep(3)
         except common.exceptions.NoSuchElementException:
             break
     
@@ -339,10 +342,10 @@ def scrape_comments(url):
         try:
             element = driver.find_element(by=By.LINK_TEXT, value="more replies")
             element.click()
-            time.sleep(2)
+            time.sleep(3)
         except common.exceptions.NoSuchElementException:
             break
-    time.sleep(2)
+    time.sleep(3)
     
     content = driver.page_source
     driver.quit()
@@ -404,19 +407,25 @@ def scrape_comments(url):
                         "cmt_vote_down": cmt_vote_down,
                         "cmt_reply": dict_rpls                
                     }
-    
+    if dict_res == {}: dict_res = "<n/a>"
+
     return dict_res
 
 '''
 Merge all menu scraper
 '''
-def scrapes(url):
+def scrapes(list_url):
+    id = list_url[0]
+    url = list_url[1]
+    print("scraping", url)
     dict_out = {
-        "site": url,
-        "basic_story": scrape_basic_and_story(url),
-        "faq": scrape_faq(url),
-        "updates": scrape_updates(url),
-        "disscusion": scrape_discussion(url),
-        "comments": scrape_comments(url)
+        id : {
+            "site": url,
+            "basic_story": scrape_basic_and_story(url),
+            "faq": scrape_faq(url),
+            "updates": scrape_updates(url),
+            "disscusion": scrape_discussion(url),
+            "comments": scrape_comments(url)
+        }
     }
     return dict_out
